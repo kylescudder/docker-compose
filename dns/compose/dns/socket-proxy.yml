@@ -12,7 +12,7 @@ services:
         ipv4_address: 192.168.92.254 # You can specify a static IP
     privileged: true # true for VM. false for unprivileged LXC container on Proxmox.
     ports:
-      - "127.0.0.1:2376:2376" # Do not expose this to the internet with port forwarding
+      - "127.0.0.1:2375:2375" # Do not expose this to the internet with port forwarding
     volumes:
       - "/var/run/docker.sock:/var/run/docker.sock"
     environment:
