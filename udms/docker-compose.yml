@@ -18,3 +18,4 @@ include:
   - compose/$HOSTNAME/socket-proxy.yml
   - compose/$HOSTNAME/portainer.yml
   - compose/$HOSTNAME/dozzle.yml
+  - compose/$HOSTNAME/homepage.yml
