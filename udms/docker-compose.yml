@@ -16,3 +16,4 @@ include:
  
   # CORE
   - compose/$HOSTNAME/socket-proxy.yml
+  - compose/$HOSTNAME/portainer.yml
