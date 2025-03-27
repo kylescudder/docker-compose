@@ -16,5 +16,6 @@ services:
       - $DOCKERDIR/appdata/homepage:/app/config
     environment:
       TZ: $TZ
+      HOMEPAGE_ALLOWED_HOSTS: 192.168.0.11:3000
       PUID: $PUID
       PGID: $PGID
