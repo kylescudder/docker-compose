@@ -8,12 +8,12 @@ networks:
     ipam:
       config:
         - subnet: 192.168.91.0/24
- 
+
 include:
   ########################### SERVICES
   # PREFIX udms = Ultimate Docker Media Server
   # HOSTNAME=udms - defined in .env
- 
+
   # CORE
   - compose/$HOSTNAME/socket-proxy.yml
   - compose/$HOSTNAME/portainer.yml
@@ -21,3 +21,6 @@ include:
   - compose/$HOSTNAME/homepage.yml
   # MEDIA
   - compose/$HOSTNAME/plex.yml
+  - compose/$HOSTNAME/sabnzbd.yml
+  - compose/$HOSTNAME/sonarr.yml
+  - compose/$HOSTNAME/bazarr.yml
