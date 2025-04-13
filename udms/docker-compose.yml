@@ -22,5 +22,8 @@ include:
   # MEDIA
   - compose/$HOSTNAME/plex.yml
   - compose/$HOSTNAME/sabnzbd.yml
+  # PVRS
+  - compose/$HOSTNAME/radarr.yml
   - compose/$HOSTNAME/sonarr.yml
+  # COMPLEMENTARY APPS
   - compose/$HOSTNAME/bazarr.yml
