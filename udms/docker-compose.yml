@@ -21,7 +21,9 @@ include:
   - compose/$HOSTNAME/homepage.yml
   # MEDIA
   - compose/$HOSTNAME/plex.yml
+  # DOWNLOADERS
   - compose/$HOSTNAME/sabnzbd.yml
+  - compose/$HOSTNAME/qbittorrent.yml
   # PVRS
   - compose/$HOSTNAME/radarr.yml
   - compose/$HOSTNAME/sonarr.yml
