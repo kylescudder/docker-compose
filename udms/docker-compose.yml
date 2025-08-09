@@ -18,7 +18,6 @@ include:
   - compose/$HOSTNAME/socket-proxy.yml
   - compose/$HOSTNAME/portainer.yml
   - compose/$HOSTNAME/dozzle.yml
-  - compose/$HOSTNAME/homepage.yml
   # MEDIA
   - compose/$HOSTNAME/plex.yml
   # DOWNLOADERS
