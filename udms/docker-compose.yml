@@ -23,3 +23,6 @@ include:
   - compose/$HOSTNAME/plex.yml
   # DOWNLOADERS
   - compose/$HOSTNAME/sabnzbd.yml
+  # PVRS
+  - compose/$HOSTNAME/radarr.yml
+  - compose/$HOSTNAME/sonarr.yml
