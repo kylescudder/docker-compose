@@ -26,3 +26,5 @@ include:
   # PVRS
   - compose/$HOSTNAME/radarr.yml
   - compose/$HOSTNAME/sonarr.yml
+  # COMPLEMENTARY APPS
+  - compose/$HOSTNAME/bazarr.yml
