@@ -21,3 +21,5 @@ include:
   - compose/$HOSTNAME/homepage.yml
   # MEDIA
   - compose/$HOSTNAME/plex.yml
+  # DOWNLOADERS
+  - compose/$HOSTNAME/sabnzbd.yml
