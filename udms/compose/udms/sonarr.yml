@@ -15,8 +15,18 @@ services:
       - $DOCKERDIR/appdata/sonarr:/config
       - $DATADIR/TV:/data/tv
       - $DATADIR/downloads:/data/downloads
+      # Trailer Downloads
+      - ./scripts:/data/scripts
+      # YouTube Auth
+      - ../../cookies.txt:/data/scripts/cookies.txt
       - "/etc/localtime:/etc/localtime:ro"
     environment:
       TZ: $TZ
       PUID: $PUID
       PGID: $PGID
+      TMDB_API_KEY: $TMDB_API_KEY
+    entrypoint: >
+      sh -c "
+        apk add --no-cache python3 ffmpeg &&
+        exec /init
+      "

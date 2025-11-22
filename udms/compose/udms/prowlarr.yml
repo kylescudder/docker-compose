@@ -1,0 +1,16 @@
+services:
+  # Prowlarr - Movie management
+  prowlarr:
+    image: lscr.io/linuxserver/prowlarr:latest
+    container_name: prowlarr
+    restart: unless-stopped
+    networks:
+      - default
+    ports:
+      - "9696:9696"
+    volumes:
+      - $DOCKERDIR/appdata/prowlarr:/config
+    environment:
+      TZ: $TZ
+      PUID: $PUID
+      PGID: $PGID

@@ -1,0 +1,36 @@
+services:
+  # Gluetun - VPN Swiss Army Knife
+  gluetun:
+    image: qmcgaw/gluetun
+    container_name: gluetun
+    restart: unless-stopped
+    cap_add:
+      - NET_ADMIN
+    devices:
+      - /dev/net/tun:/dev/net/tun
+    networks:
+      - default
+    volumes:
+      - $DOCKERDIR/appdata/gluetun:/gluetun
+    environment:
+      # VPN setup
+      VPN_SERVICE_PROVIDER: nordvpn
+      VPN_TYPE: wireguard
+      WIREGUARD_PRIVATE_KEY: ${WIREGUARD_PRIVATE_KEY}
+      SERVER_COUNTRIES: Netherlands
+
+      # General settings
+      PUID: ${PUID}
+      PGID: ${PGID}
+      TZ: ${TZ}
+
+    ports:
+      # Expose SABnzbd behind Gluetun
+      - 8084:8080    # SABnzbd Web UI
+      - 8085:8081   # qBittorrent Web UI
+      # (Optional) if you run Jackett/Prowlarr behind Gluetun, expose them here
+      # - 9117:9117   # Jackett/Prowlarr UI
+      # Existing Gluetun extras
+      - 8888:8888/tcp # HTTP proxy (if enabled)
+      - 8388:8388/tcp # Shadowsocks
+      - 8388:8388/udp # Shadowsocks

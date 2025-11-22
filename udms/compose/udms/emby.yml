@@ -1,0 +1,22 @@
+services:
+  # Emby - Media server & metadata fetcher
+  emby:
+    image: lscr.io/linuxserver/emby:latest
+    container_name: emby
+    restart: unless-stopped
+    networks:
+      - default
+    ports:
+      - "8096:8096" # HTTP
+      - "8920:8920" # HTTPS (optional, enable if you want SSL)
+    environment:
+      TZ: $TZ
+      PUID: $PUID
+      PGID: $PGID
+    volumes:
+      - $DOCKERDIR/appdata/emby:/config
+      - $DATADIR/Movies:/data/movies
+      - $DATADIR/TV:/data/tv
+      - $DATADIR/downloads:/data/downloads
+      - $DATADIR/Music:/data/music
+      - /etc/localtime:/etc/localtime:ro
