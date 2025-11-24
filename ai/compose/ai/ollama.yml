@@ -1,0 +1,21 @@
+services:
+  ollama:
+    image: ollama/ollama:latest
+    container_name: ollama
+    restart: always
+    command: >
+      sh -c "ollama serve &
+             sleep 5 &&
+             ollama pull ${DEFAULT_MODEL:-llama3} &&
+             tail -f /dev/null"
+    networks:
+      - default
+    volumes:
+      - $OLLAMA_DATA:/root/.ollama
+    ports:
+      - "11434:11434"
+
+# Named volume for persistence
+volumes:
+  ollama-data:
+    name: ollama-data

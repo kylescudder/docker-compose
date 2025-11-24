@@ -1,0 +1,19 @@
+########################### NETWORKS
+networks:
+  default:
+    driver: bridge
+  socket_proxy:
+    name: socket_proxy
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 192.168.91.0/24
+
+include:
+  ########################### SERVICES
+  # PREFIX ai
+  # HOSTNAME=ai - defined in .env
+
+  # CORE
+  - compose/$HOSTNAME/ollama.yml
+  - compose/$HOSTNAME/open-webui.yml
