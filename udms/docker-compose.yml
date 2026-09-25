@@ -2,6 +2,7 @@
 networks:
   default:
     driver: bridge
+
   socket_proxy:
     name: socket_proxy
     driver: bridge
@@ -9,24 +10,36 @@ networks:
       config:
         - subnet: 192.168.91.0/24
 
-include:
-  ########################### SERVICES
-  # PREFIX udms = Ultimate Docker Media Server
-  # HOSTNAME=udms - defined in .env
+########################### VOLUMES
+volumes:
+  media:
+    driver: local
+    driver_opts:
+      type: cifs
+      device: "//192.168.0.8/media"
+      o: "username=${SMB_USERNAME},password=${SMB_PASSWORD},vers=3.0,uid=501,gid=20,file_mode=0775,dir_mode=0775"
 
+########################### SERVICES
+include:
   # CORE
+  - compose/$HOSTNAME/emby.yml
+  - compose/$HOSTNAME/audiobookshelf.yml
   - compose/$HOSTNAME/socket-proxy.yml
   - compose/$HOSTNAME/portainer.yml
   - compose/$HOSTNAME/dozzle.yml
-  # MEDIA
-  - compose/$HOSTNAME/plex.yml
+
   # DOWNLOADERS
   - compose/$HOSTNAME/sabnzbd.yml
   - compose/$HOSTNAME/qbittorrent.yml
+
   # PVRS
   - compose/$HOSTNAME/radarr.yml
   - compose/$HOSTNAME/sonarr.yml
   - compose/$HOSTNAME/lidarr.yml
+  - compose/$HOSTNAME/readarr.yml
+
   # COMPLEMENTARY APPS
   - compose/$HOSTNAME/bazarr.yml
   - compose/$HOSTNAME/gluetun.yml
+  - compose/$HOSTNAME/prowlarr.yml
+  - compose/$HOSTNAME/rreading-glasses.yml

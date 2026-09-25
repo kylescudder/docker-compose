@@ -1,0 +1,21 @@
+services:
+  readarr:
+    image: lscr.io/linuxserver/readarr:arm64v8-0.4.18-develop
+    container_name: readarr
+    security_opt:
+      - no-new-privileges:true
+    restart: unless-stopped
+    networks:
+      - default
+    ports:
+      - "8787:8787"
+    volumes:
+      - $DOCKERDIR/appdata/readarr:/config
+      - $DATADIR/Books:/data/books
+      - $DATADIR/Audiobooks:/data/audiobooks
+      - $DATADIR/downloads:/data/downloads
+      - "/etc/localtime:/etc/localtime:ro"
+    environment:
+      TZ: $TZ
+      PUID: $PUID
+      PGID: $PGID

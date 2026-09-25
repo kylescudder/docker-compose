@@ -1,0 +1,21 @@
+services:
+  audiobookshelf:
+    image: advplyr/audiobookshelf:latest
+    container_name: audiobookshelf
+    security_opt:
+      - no-new-privileges:true
+    restart: unless-stopped
+    networks:
+      - default
+    ports:
+      - "13378:80"
+    volumes:
+      - $DOCKERDIR/appdata/audiobookshelf/config:/config
+      - $DOCKERDIR/appdata/audiobookshelf/metadata:/metadata
+      - $DATADIR/Books:/audiobooks
+      - $DATADIR/Podcasts:/podcasts
+      - "/etc/localtime:/etc/localtime:ro"
+    environment:
+      TZ: $TZ
+      PUID: $PUID
+      PGID: $PGID

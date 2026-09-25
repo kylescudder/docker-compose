@@ -17,3 +17,5 @@ services:
       DOZZLE_TAILSIZE: 300
       DOZZLE_FILTER: "status=running"
       DOCKER_HOST: tcp://socket-proxy:2375
+    volumes:
+      - ${DOCKERDIR}/appdata/dozzle:/data

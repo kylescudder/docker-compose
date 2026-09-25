@@ -1,0 +1,43 @@
+services:
+  # rreading-glasses - Readarr metadata replacement/proxy
+  rreading-glasses:
+    image: blampe/rreading-glasses:latest
+    container_name: rreading-glasses
+    hostname: rreading-glasses
+    security_opt:
+      - no-new-privileges:true
+    restart: unless-stopped
+    networks:
+      - default
+    ports:
+      - "8788:8788"
+    depends_on:
+      rreading-glasses-db:
+        condition: service_started
+    entrypoint: ["/main", "serve"]
+    command:
+      - --upstream=www.goodreads.com
+      - --verbose
+    mem_limit: 128m
+    environment:
+      POSTGRES_HOST: rreading-glasses-db
+      POSTGRES_DATABASE: rreading-glasses
+      POSTGRES_USER: rreading-glasses
+      POSTGRES_PASSWORD: $RREADING_GLASSES_POSTGRES_PASSWORD
+
+  # Postgres - rreading-glasses database
+  rreading-glasses-db:
+    image: postgres:17
+    container_name: rreading-glasses-db
+    security_opt:
+      - no-new-privileges:true
+    restart: unless-stopped
+    networks:
+      - default
+    volumes:
+      - $DOCKERDIR/appdata/rreading-glasses/postgres:/var/lib/postgresql/data
+      - "/etc/localtime:/etc/localtime:ro"
+    environment:
+      POSTGRES_USER: rreading-glasses
+      POSTGRES_PASSWORD: $RREADING_GLASSES_POSTGRES_PASSWORD
+      POSTGRES_DB: rreading-glasses

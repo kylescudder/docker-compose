@@ -1,7 +1,7 @@
 services:
   # Emby - Media server & metadata fetcher
   emby:
-    image: lscr.io/linuxserver/emby:latest
+    image: lscr.io/linuxserver/emby:4.9.5
     container_name: emby
     restart: unless-stopped
     networks:
