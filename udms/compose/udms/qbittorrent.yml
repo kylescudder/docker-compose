@@ -17,4 +17,4 @@ services:
       WEBUI_PORT: 8081                # qBittorrent listens on 8080 inside container
     volumes:
       - ${DOCKERDIR}/appdata/qbittorrent:/config
-      - ${DATADIR}/downloads:/data/downloads
+      - media:/data

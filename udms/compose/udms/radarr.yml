@@ -13,9 +13,7 @@ services:
       - "7878:7878"
     volumes:
       - $DOCKERDIR/appdata/radarr:/config
-      - $DATADIR/Movies:/data/movies
-      - $DATADIR/TV:/data/tv
-      - $DATADIR/downloads:/data/downloads
+      - media:/data
       # Trailer Downloads
       - ./scripts:/data/scripts
       # YouTube Auth

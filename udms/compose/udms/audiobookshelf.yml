@@ -12,8 +12,17 @@ services:
     volumes:
       - $DOCKERDIR/appdata/audiobookshelf/config:/config
       - $DOCKERDIR/appdata/audiobookshelf/metadata:/metadata
-      - $DATADIR/Books:/audiobooks
-      - $DATADIR/Podcasts:/podcasts
+      - type: volume
+        source: media
+        target: /audiobooks
+        volume:
+          subpath: Books
+
+      - type: volume
+        source: media
+        target: /podcasts
+        volume:
+          subpath: Podcasts
       - "/etc/localtime:/etc/localtime:ro"
     environment:
       TZ: $TZ

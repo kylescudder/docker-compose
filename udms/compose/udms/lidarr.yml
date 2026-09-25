@@ -10,8 +10,7 @@ services:
       - "8686:8686"
     volumes:
       - $DOCKERDIR/appdata/lidarr:/config
-      - $DATADIR/Music:/data/music
-      - $DATADIR/downloads:/data/downloads 
+      - media:/data
       - "/etc/localtime:/etc/localtime:ro"
     environment:
       TZ: $TZ

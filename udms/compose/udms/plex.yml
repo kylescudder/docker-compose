@@ -23,8 +23,7 @@ services:
       - "32414:32414/udp"
     volumes:
       - $DOCKERDIR/appdata/plex:/config
-      - $DATADIR/Movies:/data/movies
-      - $DATADIR/TV:/data/tv
+      - media:/data
       - /dev/shm:/data/transcode # Offload transcoding to RAM if you have enough RAM
     environment:
       TZ: $TZ

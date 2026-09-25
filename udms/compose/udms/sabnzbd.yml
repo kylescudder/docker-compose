@@ -12,7 +12,7 @@ services:
     # profiles: ["apps", "downloads", "all"]
     volumes:
       - $DOCKERDIR/appdata/sabnzbd:/config
-      - $DATADIR/downloads:/data/downloads
+      - media:/data
     environment:
       PUID: $PUID
       PGID: $PGID

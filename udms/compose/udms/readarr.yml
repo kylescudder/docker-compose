@@ -11,9 +11,7 @@ services:
       - "8787:8787"
     volumes:
       - $DOCKERDIR/appdata/readarr:/config
-      - $DATADIR/Books:/data/books
-      - $DATADIR/Audiobooks:/data/audiobooks
-      - $DATADIR/downloads:/data/downloads
+      - media:/data
       - "/etc/localtime:/etc/localtime:ro"
     environment:
       TZ: $TZ
