@@ -1,0 +1,29 @@
+services:
+  # Trailarr - Downloads trailers for Radarr/Sonarr media into each title's folder
+  # Replaces the old trailer-downloader.sh Radarr script, which saved trailers for
+  # films that had not downloaded yet; Emby then listed the trailer as the film.
+  # Keep the "Media Exists" filter on every download profile to prevent that.
+  # Docs: https://nandyalu.github.io/trailarr/
+  trailarr:
+    image: nandyalu/trailarr:latest
+    container_name: trailarr
+    restart: unless-stopped
+    # profiles: ["media", "arrs", "all"]
+    networks:
+      - default
+    ports:
+      - "7889:7889"
+    volumes:
+      - $DOCKERDIR/appdata/trailarr:/config
+      # Same mount and container path as Radarr/Sonarr, so their paths need no mapping
+      - media:/data
+    environment:
+      TZ: $TZ
+      PUID: $PUID
+      PGID: $PGID
+      TMDB_API_KEY: $TMDB_API_KEY
+      # The web login (user admin) is stored hashed in /config/.env and changed in
+      # Trailarr's settings. Do not set it here: Trailarr reapplies it on every start.
+    depends_on:
+      - radarr
+      - sonarr
