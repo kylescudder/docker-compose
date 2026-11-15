@@ -40,6 +40,7 @@ include:
 
   # COMPLEMENTARY APPS
   - compose/$HOSTNAME/bazarr.yml
+  - compose/$HOSTNAME/trailarr.yml
   - compose/$HOSTNAME/gluetun.yml
   - compose/$HOSTNAME/prowlarr.yml
   - compose/$HOSTNAME/rreading-glasses.yml
