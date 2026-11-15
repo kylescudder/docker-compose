@@ -1,0 +1,63 @@
+{
+  "ingress": [
+    {
+      "hostname": "sonarr.thescudders.org",
+      "service": "http://sonarr:8989"
+    },
+    {
+      "hostname": "radarr.thescudders.org",
+      "service": "http://radarr:7878"
+    },
+    {
+      "hostname": "prowlarr.thescudders.org",
+      "service": "http://prowlarr:9696"
+    },
+    {
+      "hostname": "bazarr.thescudders.org",
+      "service": "http://bazarr:6767"
+    },
+    {
+      "hostname": "readarr.thescudders.org",
+      "service": "http://readarr:8787"
+    },
+    {
+      "hostname": "lidarr.thescudders.org",
+      "service": "http://lidarr:8686"
+    },
+    {
+      "hostname": "qbittorrent.thescudders.org",
+      "service": "http://gluetun:8081"
+    },
+    {
+      "hostname": "sabnzbd.thescudders.org",
+      "service": "http://gluetun:8080"
+    },
+    {
+      "hostname": "portainer.thescudders.org",
+      "service": "http://portainer:9000"
+    },
+    {
+      "hostname": "dozzle.thescudders.org",
+      "service": "http://dozzle:8080"
+    },
+    {
+      "hostname": "emby.thescudders.org",
+      "service": "http://emby:8096"
+    },
+    {
+      "hostname": "watch.thescudders.org",
+      "service": "http://emby:8096"
+    },
+    {
+      "hostname": "sortarr.thescudders.org",
+      "service": "http://sortarr:3210"
+    },
+    {
+      "hostname": "trailarr.thescudders.org",
+      "service": "http://trailarr:7889"
+    },
+    {
+      "service": "http_status:404"
+    }
+  ]
+}

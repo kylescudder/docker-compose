@@ -27,6 +27,7 @@ include:
   - compose/$HOSTNAME/socket-proxy.yml
   - compose/$HOSTNAME/portainer.yml
   - compose/$HOSTNAME/dozzle.yml
+  - compose/$HOSTNAME/cloudflared.yml
 
   # DOWNLOADERS
   - compose/$HOSTNAME/sabnzbd.yml
@@ -44,3 +45,4 @@ include:
   - compose/$HOSTNAME/gluetun.yml
   - compose/$HOSTNAME/prowlarr.yml
   - compose/$HOSTNAME/rreading-glasses.yml
+  - compose/$HOSTNAME/sortarr.yml

@@ -1,0 +1,25 @@
+services:
+  cloudflared:
+    image: cloudflare/cloudflared:latest
+    container_name: udms-cloudflared
+    restart: unless-stopped
+    # The tunnel credential is owner-readable on the host. Root can read the
+    # bind mount without making it readable by other users; all caps are dropped.
+    user: "0:0"
+    read_only: true
+    cap_drop:
+      - ALL
+    security_opt:
+      - no-new-privileges:true
+    command:
+      - tunnel
+      - --no-autoupdate
+      - --metrics
+      - 0.0.0.0:2000
+      - run
+      - --token-file
+      - /run/secrets/tunnel-token
+    networks:
+      - default
+    volumes:
+      - $DOCKERDIR/appdata/cloudflared-udms/token:/run/secrets/tunnel-token:ro
