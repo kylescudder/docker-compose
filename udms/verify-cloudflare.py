@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
-"""Check the live TLS and Access boundary; no credentials are required.
+"""Check live TLS, Access boundaries and intentional public responses; no credentials required.
 
-This checks signed-out and forged-session denial, not a user's signed-in session
-or the health of the protected applications. Run after publishing DNS.
+This checks signed-out and forged-session denial, plus Listarr's public health/feed,
+not a user's signed-in session or protected app health. Run after publishing DNS.
 """
 import argparse
 from concurrent.futures import ThreadPoolExecutor
@@ -26,6 +26,35 @@ class NoRedirect(urllib.request.HTTPRedirectHandler):
 # Sortarr is behind Access while Kyle is its only user; when it leaves Access, add:
 #   'sortarr.thescudders.org': {'/': '/auth/sign-in', '/api/library': 401}
 APP_GATED = {}
+
+# Intentionally public browsing/export; direct writes require app authorization.
+PUBLIC_APPS = {'listarr.thescudders.org'}
+
+
+def check_public_app(hostname, path, expected):
+    """Require an exact public response, never an interactive Access redirect."""
+    request = urllib.request.Request('https://' + hostname + path,
+                                     headers={'User-Agent': 'UDMS-Access-verification/1.0'})
+    result = {'hostname': hostname, 'path': path, 'forged_session': False}
+    try:
+        opener = urllib.request.build_opener(NoRedirect())
+        try:
+            response = opener.open(request, timeout=20)
+        except urllib.error.HTTPError as response_error:
+            response = response_error
+        with response:
+            result['status'] = response.code
+            body = response.read()
+            if path == '/':
+                matches = 'text/html' in response.headers.get('Content-Type', '') and bool(body)
+            else:
+                data = json.loads(body)
+                matches = (data.get('ok') is True and bool(data.get('revision'))
+                           if path == '/api/health' else data == expected)
+            result['passed'] = response.code == 200 and matches
+    except Exception as exc:
+        result.update(passed=False, error=type(exc).__name__)
+    return result
 
 # Origins allowed to be unreachable (curl 000) without failing the origin check.
 ORIGIN_KNOWN_DOWN = {'lidarr.thescudders.org'}
@@ -108,7 +137,8 @@ def main():
     args = parser.parse_args()
     config = json.loads((Path(__file__).parent / 'cloudflare/ingress.json').read_text())
     hosts = [rule['hostname'] for rule in config['ingress']
-             if 'hostname' in rule and rule['hostname'] not in APP_GATED]
+             if 'hostname' in rule and rule['hostname'] not in APP_GATED
+             and rule['hostname'] not in PUBLIC_APPS]
     scenarios = [(host, path, forged) for host in hosts
                  for path, forged in [('/', False), ('/api/v3/system/status', False), ('/', True)]]
     with ThreadPoolExecutor(max_workers=6) as pool:
@@ -120,6 +150,12 @@ def main():
         for path, expected in paths.items():
             result = check_app_gate(host, path, expected)
             print(('PASS' if result['passed'] else 'FAIL') + ' ' + host + path + ' (app sign-in gate)')
+            results.append(result)
+    for host in PUBLIC_APPS:
+        for path, expected in [('/', None), ('/api/health', None),
+                               ('/api/feed?ids=438631', [{'id': 438631}])]:
+            result = check_public_app(host, path, expected)
+            print(('PASS' if result['passed'] else 'FAIL') + ' ' + host + path + ' (public app)')
             results.append(result)
     origin_results = [check_origin(rule) for rule in config['ingress'] if 'hostname' in rule]
     for result in origin_results:
@@ -134,7 +170,7 @@ def main():
     if args.report:
         args.report.parent.mkdir(parents=True, exist_ok=True)
         args.report.write_text(json.dumps(report, indent=2) + '\n')
-    print(f'{passed}/{len(results)} live Access checks passed')
+    print(f'{passed}/{len(results)} live boundary/origin checks passed')
     return 0 if passed == len(results) else 1
 
 
