@@ -4,6 +4,14 @@ The dedicated `forge-udms` Cloudflare Tunnel runs as `udms-cloudflared` in the
 Colima Docker context. It reaches the existing applications over `udms_default`.
 No router port forwarding is required. Keep Colima and the stack running on Forge.
 
+Listarr is a **proposed addition**, not a provisioned public service. Its desired
+route is recorded in `ingress.json`, but DNS and remotely managed tunnel changes
+have not been applied. See [Listarr configuration and rollout](../LISTARR.md).
+Keep `listarr.thescudders.org` outside the blanket Access application: browsing
+and feed export are public, and direct Radarr creation uses optional Clerk with
+a server-side user allowlist. Its default feed origin is internal (`listarr:3211`)
+so Radarr never needs an interactive proxy login.
+
 The public URLs are:
 
 - https://sonarr.thescudders.org
@@ -23,7 +31,8 @@ The public URLs are:
 
 Each hostname has a proxied CNAME to
 `b0a22ef6-b482-4a51-ac9b-b6506705085d.cfargotunnel.com`.
-`ingress.json` records the remotely managed ingress configuration. Its final rule
+`ingress.json` records the desired remotely managed ingress configuration, including
+the pending Listarr addition. Its final rule
 returns 404 for unmatched hostnames.
 
 The `Forge UDMS arr stack` Access application
@@ -106,7 +115,11 @@ python3 udms/verify-cloudflare.py
 This performs three live HTTPS assertions per Access host: the home page, an
 API path, and an invalid session cookie must all redirect to Cloudflare Access.
 Hosts listed in `APP_GATED` (none today) get the app's own sign-in gate checked instead.
-It fails if an app becomes publicly accessible, TLS fails, or the edge errors.
+Listarr is explicitly listed in `PUBLIC_APPS`; it must serve public HTML, health
+JSON and the exact anonymous `/api/feed?ids=438631` response. These checks will fail
+until the proposed service and route are deployed. An Access redirect fails these
+public checks. For the other hosts, unexpected public access fails verification.
+TLS failures and edge errors fail verification for all hosts.
 It does not prove that a signed-in user can use an app or that the app is healthy.
 
 During initial provisioning, five origins responded locally. Lidarr was already

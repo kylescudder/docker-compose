@@ -1,0 +1,45 @@
+services:
+  # Listarr - hand-picked TMDB programmes exported as Radarr custom lists
+  # Source/configuration: https://github.com/kylescudder/listarr
+  listarr:
+    image: ghcr.io/kylescudder/listarr:${LISTARR_IMAGE_TAG:-main}
+    container_name: listarr
+    restart: unless-stopped
+    # profiles: ["media", "arrs", "all"]
+    networks:
+      - default
+    # No published port: tunnel and Radarr both reach listarr:3211 directly.
+    user: "501:20"
+    init: true
+    read_only: true
+    tmpfs:
+      - /tmp:size=32m,mode=1777
+    cap_drop:
+      - ALL
+    security_opt:
+      - no-new-privileges:true
+    mem_limit: 384m
+    cpus: 0.5
+    environment:
+      TZ: $TZ
+      NODE_ENV: production
+      HOST: 0.0.0.0
+      PORT: "3211"
+      APP_ORIGIN: ${LISTARR_APP_ORIGIN:-https://listarr.thescudders.org}
+      FEED_ORIGIN: ${LISTARR_FEED_ORIGIN:-http://listarr:3211}
+      TMDB_READ_TOKEN: ${LISTARR_TMDB_READ_TOKEN:-}
+      # Optional: only direct Radarr creation needs Clerk and the settings below.
+      # VITE_CLERK_PUBLISHABLE_KEY must be baked into the image, not set here.
+      CLERK_SECRET_KEY: ${LISTARR_CLERK_SECRET_KEY:-}
+      CLERK_JWT_KEY: ${LISTARR_CLERK_JWT_KEY:-}
+      RADARR_ALLOWED_USER_IDS: ${LISTARR_RADARR_ALLOWED_USER_IDS:-}
+      RADARR_URL: ${LISTARR_RADARR_URL:-http://radarr:7878}
+      RADARR_API_KEY: ${RADARR_API_KEY:-}
+      RADARR_QUALITY_PROFILE_ID: ${LISTARR_RADARR_QUALITY_PROFILE_ID:-}
+      RADARR_ROOT_FOLDER: ${LISTARR_RADARR_ROOT_FOLDER:-}
+    healthcheck:
+      test: ["CMD", "bun", "-e", "const r = await fetch('http://127.0.0.1:3211/api/health'); process.exit(r.ok ? 0 : 1)"]
+      interval: 20s
+      timeout: 5s
+      start_period: 15s
+      retries: 3

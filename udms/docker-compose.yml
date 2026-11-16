@@ -46,3 +46,4 @@ include:
   - compose/$HOSTNAME/prowlarr.yml
   - compose/$HOSTNAME/rreading-glasses.yml
   - compose/$HOSTNAME/sortarr.yml
+  - compose/$HOSTNAME/listarr.yml
