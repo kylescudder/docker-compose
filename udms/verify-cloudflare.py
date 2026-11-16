@@ -27,6 +27,9 @@ class NoRedirect(urllib.request.HTTPRedirectHandler):
 #   'sortarr.thescudders.org': {'/': '/auth/sign-in', '/api/library': 401}
 APP_GATED = {}
 
+# Origins allowed to be unreachable (curl 000) without failing the origin check.
+ORIGIN_KNOWN_DOWN = {'lidarr.thescudders.org'}
+
 
 def check_app_gate(hostname, path, expected):
     request = urllib.request.Request('https://' + hostname + path,
@@ -88,10 +91,15 @@ def check_origin(rule):
     except Exception as exc:
         return {'hostname': rule['hostname'], 'passed': False, 'error': type(exc).__name__}
     body, _, status = out.rpartition('\n')
-    # Lidarr is known to be down (000); reject only app-level hostname rejections.
+    result = {'hostname': rule['hostname'], 'forwarded_host': host, 'status': status}
+    # No status line means docker exec or curl never ran (Colima down, probe stopped).
+    if not (len(status) == 3 and status.isdigit()):
+        return {**result, 'passed': False, 'error': 'probe did not run'}
+    # 000 means the origin did not answer; only Lidarr is known to be down.
+    if status == '000':
+        return {**result, 'passed': rule['hostname'] in ORIGIN_KNOWN_DOWN}
     rejected = 'invalid hostname' in body.lower() or status == '400'
-    return {'hostname': rule['hostname'], 'forwarded_host': host, 'status': status,
-            'passed': not rejected}
+    return {**result, 'passed': not rejected}
 
 
 def main():
