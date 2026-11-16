@@ -62,12 +62,12 @@ The root folder is Radarr's existing path (for example under `/data`), not a new
 mount in Listarr. Direct creation registers an enabled import list with Search on
 Add off; Radarr's later sync/monitoring/RSS behavior can still add or download films.
 
-## Proposed tunnel route
+## Public tunnel route
 
-`cloudflare/ingress.json` includes the proposed
+`cloudflare/ingress.json` includes the live
 `listarr.thescudders.org` → `http://listarr:3211` route. This file does not provision
-the remotely managed tunnel. DNS, ingress and any Access changes require a
-separately authorized rollout. Do not add Listarr to the existing blanket
+the remotely managed tunnel. The initial DNS and ingress rollout was authorized
+and completed on 16 November 2026; future changes require deployment authorization. Do not add Listarr to the existing blanket
 `Forge UDMS arr stack` Access application: browsing/search/export are intentionally
 public, while direct creation is authorized by Clerk and the server allowlist.
 Check for wildcard Access policies as well. If a proxy gate is introduced later,

@@ -4,9 +4,9 @@ The dedicated `forge-udms` Cloudflare Tunnel runs as `udms-cloudflared` in the
 Colima Docker context. It reaches the existing applications over `udms_default`.
 No router port forwarding is required. Keep Colima and the stack running on Forge.
 
-Listarr is a **proposed addition**, not a provisioned public service. Its desired
-route is recorded in `ingress.json`, but DNS and remotely managed tunnel changes
-have not been applied. See [Listarr configuration and rollout](../LISTARR.md).
+Listarr is live at https://listarr.thescudders.org (published 16 November 2026).
+Its proxied CNAME and remotely managed tunnel route point to `http://listarr:3211`.
+See [Listarr configuration and rollout](../LISTARR.md).
 Keep `listarr.thescudders.org` outside the blanket Access application: browsing
 and feed export are public, and direct Radarr creation uses optional Clerk with
 a server-side user allowlist. Its default feed origin is internal (`listarr:3211`)
@@ -28,15 +28,15 @@ The public URLs are:
 - https://watch.thescudders.org
 - https://sortarr.thescudders.org
 - https://trailarr.thescudders.org
+- https://listarr.thescudders.org
 
 Each hostname has a proxied CNAME to
 `b0a22ef6-b482-4a51-ac9b-b6506705085d.cfargotunnel.com`.
-`ingress.json` records the desired remotely managed ingress configuration, including
-the pending Listarr addition. Its final rule
+`ingress.json` records the remotely managed ingress configuration. Its final rule
 returns 404 for unmatched hostnames.
 
 The `Forge UDMS arr stack` Access application
-(`8e0f7e0d-502a-4f61-8b18-95cf301894b2`) covers all fourteen hostnames with the existing
+(`8e0f7e0d-502a-4f61-8b18-95cf301894b2`) covers the fourteen hostnames other than Listarr with the existing
 `Kyle only` email allowlist and a 12-hour session. Sign in through Cloudflare
 Access first, then use each application's existing login where enabled.
 App URLs, app authentication, and existing integrations retain their settings.
@@ -116,8 +116,7 @@ This performs three live HTTPS assertions per Access host: the home page, an
 API path, and an invalid session cookie must all redirect to Cloudflare Access.
 Hosts listed in `APP_GATED` (none today) get the app's own sign-in gate checked instead.
 Listarr is explicitly listed in `PUBLIC_APPS`; it must serve public HTML, health
-JSON and the exact anonymous `/api/feed?ids=438631` response. These checks will fail
-until the proposed service and route are deployed. An Access redirect fails these
+JSON and the exact anonymous `/api/feed?ids=438631` response. An Access redirect fails these
 public checks. For the other hosts, unexpected public access fails verification.
 TLS failures and edge errors fail verification for all hosts.
 It does not prove that a signed-in user can use an app or that the app is healthy.
@@ -125,3 +124,19 @@ It does not prove that a signed-in user can use an app or that the app is health
 During initial provisioning, five origins responded locally. Lidarr was already
 unavailable on port 8686; its DNS and Access route are configured, but the app
 itself must become healthy before it can serve requests.
+
+## Listarr rollout verification — 16 November 2026
+
+The authorized rollout added only Listarr's tunnel ingress and proxied CNAME;
+existing ingress rules and Access applications were preserved. The running
+connector picked up the configuration without a restart. Listarr's server token
+was loaded from the Forge vault into the ignored host `.env` (mode 0600).
+
+`python3 -B udms/verify-cloudflare.py --report /tmp/listarr-udms-evidence/cloudflare-live-report.json`
+passed all 60 boundary/origin checks. Anonymous HTTPS requests to Listarr's page,
+health and exact feed succeeded; the other fourteen apps retained their Access
+redirects. Public search returned HTTP 200 with results, and an anonymous
+`POST /api/lists` with the correct Origin returned HTTP 401. No Radarr list was
+created. The health response reported image revision
+`b0bf451ffe7a5e8127318ed41a174122380fb7fa`. This verifies the API and routing, not
+browser E2E journeys or a real Clerk-authorized creation.
